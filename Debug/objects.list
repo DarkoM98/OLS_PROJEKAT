@@ -23,6 +23,7 @@
 "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_core.o"
 "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ctlreq.o"
 "Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.o"
+"Src/CO23Click.o"
 "Src/GUIConf.o"
 "Src/GUI_X.o"
 "Src/LCDConf.o"

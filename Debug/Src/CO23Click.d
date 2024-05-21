@@ -1,4 +1,4 @@
-Src/main.o: ../Src/main.c ../Inc/main.h \
+Src/CO23Click.o: ../Src/CO23Click.c ../Inc/CO23Click.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h \
  ../Inc/stm32f7xx_hal_conf.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_rcc.h \
@@ -29,24 +29,9 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_tim_ex.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_pcd.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_ll_usb.h \
- ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_pcd_ex.h \
- ../Inc/usb_device.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../Inc/usbd_conf.h ../Inc/main.h ../Inc/usbd_cdc_if.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
- ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- ../Drivers/Drajveri_Ekran_Tac/Inklud/SSD1963.h \
- ../Drivers/Drajveri_Ekran_Tac/Inklud/STMPE610.h ../STemWinLib/Inc/GUI.h \
- ../STemWinLib/Inc/GUI_ConfDefaults.h ../Inc/GUIConf.h \
- ../STemWinLib/Inc/GUI_Type.h ../STemWinLib/Inc/LCD.h \
- ../STemWinLib/Inc/Global.h ../STemWinLib/Inc/GUI_Version.h \
- ../Inc/LCDConf.h ../Inc/CO23Click.h
+ ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_pcd_ex.h
 
-../Inc/main.h:
+../Inc/CO23Click.h:
 
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal.h:
 
@@ -109,47 +94,3 @@ Src/main.o: ../Src/main.c ../Inc/main.h \
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_ll_usb.h:
 
 ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_pcd_ex.h:
-
-../Inc/usb_device.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-
-../Inc/usbd_conf.h:
-
-../Inc/main.h:
-
-../Inc/usbd_cdc_if.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_def.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h:
-
-../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h:
-
-../Drivers/Drajveri_Ekran_Tac/Inklud/SSD1963.h:
-
-../Drivers/Drajveri_Ekran_Tac/Inklud/STMPE610.h:
-
-../STemWinLib/Inc/GUI.h:
-
-../STemWinLib/Inc/GUI_ConfDefaults.h:
-
-../Inc/GUIConf.h:
-
-../STemWinLib/Inc/GUI_Type.h:
-
-../STemWinLib/Inc/LCD.h:
-
-../STemWinLib/Inc/Global.h:
-
-../STemWinLib/Inc/GUI_Version.h:
-
-../Inc/LCDConf.h:
-
-../Inc/CO23Click.h:

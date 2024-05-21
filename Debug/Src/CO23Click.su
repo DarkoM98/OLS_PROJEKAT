@@ -1,0 +1,4 @@
+CO23Click.c:24:16:I2CReadReg	32	static
+CO23Click.c:39:6:C02Click_Init	8	static
+CO23Click.c:44:11:C02Click_GetSensorStatus	8	static
+CO23Click.c:52:9:C02Click_GetProdId	8	static

@@ -35,6 +35,8 @@
 #include "stdint.h"
 #include "stdio.h"
 
+#include "CO23Click.h"
+
 
 /* USER CODE END Includes */
 
@@ -122,6 +124,7 @@ int main(void)
   /* Initialize all configured peripherals */
   Init_LCD_GPIO();
   Init_TOUCH_GPIO(hi2c1);
+  C02Click_Init(hi2c2);
 
   STMPE610_Init();
 
@@ -136,21 +139,21 @@ int main(void)
 
   //hWin = CreateWindow();
   char msg[100u] = { 0u };
-  /* Infinite loop */
+  GUI_Delay(100);
+  uint8_t Co2Status = C02Click_GetProdId();
+  sprintf(msg, "ProdId: %d", Co2Status);
+  GUI_DispString(msg);
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-
 	  STMPE610_read_xyz();
-	  	  GUI_TOUCH_Exec();
-	  	  keypressed = GUI_GetKey();
+	  GUI_TOUCH_Exec();
+	  keypressed = GUI_GetKey();
 
 		  GUI_Delay(1);
-
 
 		  X_koordinata = STMPE610_GetX_TOUCH();
 		  Y_koordinata = STMPE610_GetY_TOUCH();
