@@ -36,17 +36,26 @@
 #include "stdio.h"
 
 #include "CO23Click.h"
+#include <stdbool.h>
 
 
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+typedef uint8_t bool_t;
+
+typedef struct
+{
+  uint16_t Result;
+  uint16_t Count;
+} MeasurementMessage_t;
 
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define MEAS_RES_INVALID  (0xFFFFu)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -64,10 +73,17 @@ extern volatile GUI_TIMER_TIME OS_TimeMS;
 uint16_t X_koordinata = 0;
 uint16_t Y_koordinata = 0;
 uint16_t keypressed = 0;
+static bool_t NewMeasurementEvent = FALSE;
+static MeasurementMessage_t MeasurementMsg =
+{
+  .Result = MEAS_RES_INVALID,
+  .Count = 0u
+};
 
 void HAL_SYSTICK_Callback(void)
 {
 	OS_TimeMS++;
+  C02Click_CyclicJob1ms();
 }
 
 /* USER CODE END PV */
@@ -77,13 +93,25 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
+static void Co2MeasurementFinished(uint16_t Co2Ppm);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+static void Co2MeasurementFinished(uint16_t Co2Ppm)
+{
+  NewMeasurementEvent = TRUE;
+  MeasurementMsg.Result = Co2Ppm;
+  MeasurementMsg.Count++;
+}
+static void PrintToDisplay(char* msg)
+{
+  GUI_Clear();
+  GUI_DispString(msg);
+}
 /* USER CODE END 0 */
 
 
@@ -124,7 +152,7 @@ int main(void)
   /* Initialize all configured peripherals */
   Init_LCD_GPIO();
   Init_TOUCH_GPIO(hi2c1);
-  C02Click_Init(hi2c2);
+  C02Click_Init(hi2c2, Co2MeasurementFinished);
 
   STMPE610_Init();
 
@@ -140,9 +168,9 @@ int main(void)
   //hWin = CreateWindow();
   char msg[100u] = { 0u };
   GUI_Delay(100);
-  uint8_t Co2Status = C02Click_GetProdId();
-  sprintf(msg, "ProdId: %d", Co2Status);
-  GUI_DispString(msg);
+
+  C02Click_TriggerContinuousMeasurement(5u); //trigger continuous measurement for 5s rate.
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -161,6 +189,19 @@ int main(void)
 
 			  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4, GPIO_PIN_SET);
 		  }
+
+      if(FALSE != NewMeasurementEvent)
+      {
+          sprintf(msg, "Mes count: %d\nMes result: %d", MeasurementMsg.Count, MeasurementMsg.Result);
+          PrintToDisplay(msg);
+          NewMeasurementEvent = FALSE;
+          if(MeasurementMsg.Count == 10)
+          {
+            C02Click_StopMeasurement();
+            sprintf(msg, "Measurement stopped after %d measurements", MeasurementMsg.Count);
+            PrintToDisplay(msg);
+          }
+      }
   }
   /* USER CODE END 3 */
 }

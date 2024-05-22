@@ -1,4 +1,13 @@
-CO23Click.c:24:16:I2CReadReg	32	static
-CO23Click.c:39:6:C02Click_Init	8	static
-CO23Click.c:44:11:C02Click_GetSensorStatus	8	static
-CO23Click.c:52:9:C02Click_GetProdId	8	static
+CO23Click.c:108:13:I2CWriteReg	24	static
+CO23Click.c:99:16:I2CReadReg	32	static
+CO23Click.c:114:6:C02Click_Init	8	static
+CO23Click.c:120:9:C02Click_GetProdId	8	static
+CO23Click.c:129:9:C02Click_GetRev	8	static
+CO23Click.c:137:6:C02Click_SetMeasurementRate	16	static
+CO23Click.c:150:10:C02Click_GetC02Ppm	8	static
+CO23Click.c:159:6:C02Click_SetRefPressure	8	static
+CO23Click.c:170:10:C02Click_GetRefPressure	8	static
+CO23Click.c:180:6:C02Click_CyclicJob1ms	8	static
+CO23Click.c:198:6:C02Click_SetOpMode	8	static
+CO23Click.c:208:6:C02Click_TriggerContinuousMeasurement	8	static
+CO23Click.c:217:6:C02Click_StopMeasurement	8	static
