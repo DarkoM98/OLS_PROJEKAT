@@ -37,4 +37,6 @@
 "Src/usbd_cdc_if.o"
 "Src/usbd_conf.o"
 "Src/usbd_desc.o"
+"Src/Windows/Co2GraphDLG.o"
+"Src/Windows/WindowDLG.o"
 "Startup/startup_stm32f746zgtx.o"

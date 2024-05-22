@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "dialog.h": "c",
+        "lcd.h": "c",
+        "guiconf.h": "c"
+    }
+}

@@ -37,7 +37,8 @@
 
 #include "CO23Click.h"
 #include <stdbool.h>
-
+#include "Windows/Co2GraphDLG.h"
+#include "Windows/WindowDLG.h"
 
 /* USER CODE END Includes */
 
@@ -80,6 +81,16 @@ static MeasurementMessage_t MeasurementMsg =
   .Count = 0u
 };
 
+GRAPH_Handle GraphHandle;
+GRAPH_DATA_Handle GraphDataHandle;
+GRAPH_SCALE_Handle GraphScaleHandle;
+GRAPH_SCALE_Handle GraphScaleHandle2;
+#define MAX_GRAPH_DATA 1000
+#define GRAPH_STEP_SIZE 25
+int16_t GraphData[MAX_GRAPH_DATA] = { 0 };
+uint16_t lastMeasuredPpm = 0u;
+uint16_t MeasurementRateInS = 5;
+
 void HAL_SYSTICK_Callback(void)
 {
 	OS_TimeMS++;
@@ -94,6 +105,10 @@ static void MX_GPIO_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void Co2MeasurementFinished(uint16_t Co2Ppm);
+static void SetupGraph(void);
+static void AddMesToGraph(uint16_t MeasuredPpm);
+static void SetGraphScale(uint16_t MesRate);
+WM_HWIN hWin;
 
 /* USER CODE BEGIN PFP */
 
@@ -105,12 +120,56 @@ static void Co2MeasurementFinished(uint16_t Co2Ppm)
 {
   NewMeasurementEvent = TRUE;
   MeasurementMsg.Result = Co2Ppm;
-  MeasurementMsg.Count++;
+  AddMesToGraph(Co2Ppm);
 }
 static void PrintToDisplay(char* msg)
 {
   GUI_Clear();
   GUI_DispString(msg);
+}
+
+static void SetGraphScale(uint16_t MesRate)
+{
+	float rate = 1.0/MesRate;
+	GRAPH_SCALE_SetFactor(GraphScaleHandle, rate);
+}
+static int mescount = 0;
+static void AddMesToGraph(uint16_t MeasuredPpm)
+{
+	int stepSize = (MeasuredPpm - lastMeasuredPpm)/ (GRAPH_STEP_SIZE - 1);
+	for(int x = 0; x < GRAPH_STEP_SIZE; x++) //25pixels = 5s
+	{
+		  GRAPH_DATA_YT_AddValue(GraphDataHandle, ((int16_t)lastMeasuredPpm + x*(int16_t)stepSize)/10);
+	}
+	lastMeasuredPpm = MeasuredPpm;
+	mescount++;
+	if(mescount > 12)
+	{
+		static int scroll = 0;
+		scroll -= 25;
+		GRAPH_SCALE_SetOff(GraphScaleHandle, scroll);
+	}
+}
+
+static void SetupGraph()
+{
+  GraphHandle = WM_GetDialogItem(hWin, ID_GRAPH_0);
+  GRAPH_SetColor(GraphHandle, GUI_LIGHTGRAY, GRAPH_CI_BK);
+  GRAPH_SetGridVis(GraphHandle, TRUE);
+  GRAPH_SetAutoScrollbar(GraphHandle, GUI_COORD_X, TRUE);
+
+  GraphScaleHandle = GRAPH_SCALE_Create(390, GUI_TA_HCENTER, GRAPH_SCALE_CF_HORIZONTAL, 50);
+  GRAPH_SCALE_SetFactor(GraphScaleHandle, 0.2);
+  GRAPH_AttachScale(GraphHandle, GraphScaleHandle);
+
+  GraphScaleHandle2 = GRAPH_SCALE_Create(0, GUI_TA_VCENTER, GRAPH_SCALE_CF_VERTICAL, 50);
+  GRAPH_SCALE_SetFactor(GraphScaleHandle2, 10);
+  GRAPH_AttachScale(GraphHandle, GraphScaleHandle2);
+
+  GraphDataHandle = GRAPH_DATA_YT_Create(GUI_RED, 300, GraphData, 0);
+  GRAPH_DATA_YT_SetAlign(GraphDataHandle, GRAPH_ALIGN_LEFT);
+  GRAPH_AttachData(GraphHandle, GraphDataHandle);
+
 }
 /* USER CODE END 0 */
 
@@ -161,9 +220,9 @@ int main(void)
 
   GUI_SetBkColor(GUI_BLUE);
   GUI_Clear();
-  GUI_SetBkColor(GUI_BLACK);
-  GUI_SetFont(&GUI_Font32_1);
-  GUI_DispString("HELLO DM");
+//  GUI_SetBkColor(GUI_BLACK);
+//  GUI_SetFont(&GUI_Font32_1);
+//  GUI_DispString("HELLO DM");
 
   //hWin = CreateWindow();
   char msg[100u] = { 0u };
@@ -171,6 +230,15 @@ int main(void)
 
   C02Click_TriggerContinuousMeasurement(5u); //trigger continuous measurement for 5s rate.
 
+//  hWin=CreateCo2Graph();
+  hWin = CreateWindow();
+  SetupGraph();
+  SetGraphScale(MeasurementRateInS);
+//  int16_t graphData[100] = { 0 };
+//  GRAPH_DATA_Handle GraphDataHandle = GRAPH_DATA_YT_Create(GUI_LIGHTGRAY, 100, graphData, 100);
+//  GRAPH_Handle GraphHandle = WM_GetDialogItem(hWin, ID_GRAPH_0);
+//  GRAPH_AttachData(GraphHandle, GraphDataHandle);
+//  for(int i = 0; i < 400; i++) GRAPH_DATA_YT_AddValue(GraphDataHandle, i);
   /* USER CODE BEGIN WHILE */
   while (1)
   {
