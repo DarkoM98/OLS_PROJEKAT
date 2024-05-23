@@ -85,6 +85,17 @@ GRAPH_Handle GraphHandle;
 GRAPH_DATA_Handle GraphDataHandle;
 GRAPH_SCALE_Handle GraphScaleHandle;
 GRAPH_SCALE_Handle GraphScaleHandle2;
+
+SLIDER_Handle RefPressureSliderHandle;
+SLIDER_Handle MesRateSliderHandle;
+
+TEXT_Handle RefPresTextBox;
+TEXT_Handle MesRateTextBox;
+TEXT_Handle ProdTextBox;
+TEXT_Handle RevTextBox;
+TEXT_Handle LastResultTextBox;
+TEXT_Handle InfoTextBox;
+
 #define MAX_GRAPH_DATA 1000
 #define GRAPH_STEP_SIZE 25
 int16_t GraphData[MAX_GRAPH_DATA] = { 0 };
@@ -108,6 +119,7 @@ static void Co2MeasurementFinished(uint16_t Co2Ppm);
 static void SetupGraph(void);
 static void AddMesToGraph(uint16_t MeasuredPpm);
 static void SetGraphScale(uint16_t MesRate);
+static void SetupUtils(void);
 WM_HWIN hWin;
 
 /* USER CODE BEGIN PFP */
@@ -121,11 +133,88 @@ static void Co2MeasurementFinished(uint16_t Co2Ppm)
   NewMeasurementEvent = TRUE;
   MeasurementMsg.Result = Co2Ppm;
   AddMesToGraph(Co2Ppm);
+  char msg[100] = { 0u };
+  sprintf(msg, "Last result: %d [ppm]", Co2Ppm);
+  TEXT_SetText(LastResultTextBox, msg);
 }
+
 static void PrintToDisplay(char* msg)
 {
   GUI_Clear();
   GUI_DispString(msg);
+}
+
+void RefPressureSliderChanged(void)
+{
+    char msg[100];
+    sprintf(msg, "Ref pressure: %d", SLIDER_GetValue(RefPressureSliderHandle));
+    TEXT_SetText(RefPresTextBox, msg);
+    sprintf(msg, "Set ref pressure?");
+    TEXT_SetText(InfoTextBox, msg);
+}
+
+void MesRateCliderChanged(void)
+{
+	char msg[100];
+    sprintf(msg, "Mes rate: %d", SLIDER_GetValue(MesRateSliderHandle));
+    TEXT_SetText(MesRateTextBox, msg);
+    sprintf(msg, "Set mes rate?");
+    TEXT_SetText(InfoTextBox, msg);
+}
+
+void RefPressureSetButton(void)
+{
+    uint16_t refPressure = (uint16_t)SLIDER_GetValue(RefPressureSliderHandle);
+    C02Click_SetRefPressure(refPressure);
+    TEXT_SetText(InfoTextBox, "Ref pressure set!");
+}
+
+void MesRateSetButton(void)
+{
+    uint16_t MesRate = (uint16_t)SLIDER_GetValue(MesRateSliderHandle);
+    MeasurementRateInS = MesRate;
+    SetGraphScale(MesRate);
+    C02Click_SetMeasurementRate(MesRate);
+    TEXT_SetText(InfoTextBox, "Mes rate set!");
+}
+
+void StartMesButton(void)
+{
+  C02Click_TriggerContinuousMeasurement(MeasurementRateInS);
+  TEXT_SetText(InfoTextBox, "Mes started!");
+}
+
+void StopMesButton(void)
+{
+  C02Click_StopMeasurement();
+  TEXT_SetText(InfoTextBox, "Mes stopped!");
+}
+
+void ClearGraphButton(void)
+{
+    GRAPH_SCALE_SetOff(GraphScaleHandle, 0);
+    GRAPH_DATA_YT_Clear(GraphDataHandle);
+    TEXT_SetText(InfoTextBox, "Graph cleared!");
+}
+
+static void SetupUtils(void)
+{
+    RefPressureSliderHandle = WM_GetDialogItem(hWin, ID_SLIDER_0);
+    MesRateSliderHandle = WM_GetDialogItem(hWin, ID_SLIDER_1);
+
+    RefPresTextBox = WM_GetDialogItem(hWin, ID_TEXT_7);
+    MesRateTextBox = WM_GetDialogItem(hWin, ID_TEXT_8); 
+    LastResultTextBox = WM_GetDialogItem(hWin, ID_TEXT_5);
+    InfoTextBox = WM_GetDialogItem(hWin, ID_TEXT_6);
+
+    SLIDER_SetRange(RefPressureSliderHandle, 750, 1150);
+    SLIDER_SetRange(MesRateSliderHandle, 5, 4095);
+    char msg[100];
+    sprintf(msg, "Ref pressure: %d", SLIDER_GetValue(RefPressureSliderHandle));
+    TEXT_SetText(RefPresTextBox, msg);
+
+    sprintf(msg, "Mes rate: %d", SLIDER_GetValue(MesRateSliderHandle));
+    TEXT_SetText(MesRateTextBox, msg);
 }
 
 static void SetGraphScale(uint16_t MesRate)
@@ -228,12 +317,13 @@ int main(void)
   char msg[100u] = { 0u };
   GUI_Delay(100);
 
-  C02Click_TriggerContinuousMeasurement(5u); //trigger continuous measurement for 5s rate.
+//  C02Click_TriggerContinuousMeasurement(5u); //trigger continuous measurement for 5s rate.
 
 //  hWin=CreateCo2Graph();
   hWin = CreateWindow();
   SetupGraph();
   SetGraphScale(MeasurementRateInS);
+  SetupUtils();
 //  int16_t graphData[100] = { 0 };
 //  GRAPH_DATA_Handle GraphDataHandle = GRAPH_DATA_YT_Create(GUI_LIGHTGRAY, 100, graphData, 100);
 //  GRAPH_Handle GraphHandle = WM_GetDialogItem(hWin, ID_GRAPH_0);
@@ -463,7 +553,148 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void _cbDialog(WM_MESSAGE * pMsg) {
+  int NCode;
+  int Id;
+  // USER START (Optionally insert additional variables)
+  // USER END
 
+  switch (pMsg->MsgId) {
+  case WM_NOTIFY_PARENT:
+    Id    = WM_GetId(pMsg->hWinSrc);
+    NCode = pMsg->Data.v;
+    switch(Id) {
+    case ID_BUTTON_0: // Notifications sent by 'Get device data'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_SLIDER_0: // Notifications sent by 'Slider'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_SLIDER_1: // Notifications sent by 'Slider'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_VALUE_CHANGED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_1: // Notifications sent by 'Set'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_2: // Notifications sent by 'Set'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_3: // Notifications sent by 'Start'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_4: // Notifications sent by 'Stop'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    case ID_BUTTON_5: // Notifications sent by 'Clear'
+      switch(NCode) {
+      case WM_NOTIFICATION_CLICKED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      case WM_NOTIFICATION_RELEASED:
+        // USER START (Optionally insert code for reacting on notification message)
+        // USER END
+        break;
+      // USER START (Optionally insert additional code for further notification handling)
+      // USER END
+      }
+      break;
+    // USER START (Optionally insert additional code for further Ids)
+    // USER END
+    }
+    break;
+  // USER START (Optionally insert additional message handling)
+  // USER END
+  default:
+    WM_DefaultProc(pMsg);
+    break;
+  }
+}
 /* USER CODE END 4 */
 
 /**

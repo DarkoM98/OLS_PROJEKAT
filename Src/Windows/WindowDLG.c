@@ -19,6 +19,7 @@
 */
 
 #include "DIALOG.h"
+#include "Windows/WindowDLG.h"
 
 /*********************************************************************
 *
@@ -26,25 +27,6 @@
 *
 **********************************************************************
 */
-#define ID_WINDOW_0        (GUI_ID_USER + 0x00)
-#define ID_GRAPH_0        (GUI_ID_USER + 0x01)
-#define ID_TEXT_0        (GUI_ID_USER + 0x02)
-#define ID_BUTTON_0        (GUI_ID_USER + 0x03)
-#define ID_TEXT_1        (GUI_ID_USER + 0x04)
-#define ID_TEXT_2        (GUI_ID_USER + 0x05)
-#define ID_SLIDER_0        (GUI_ID_USER + 0x06)
-#define ID_SLIDER_1        (GUI_ID_USER + 0x07)
-#define ID_BUTTON_1        (GUI_ID_USER + 0x09)
-#define ID_BUTTON_2        (GUI_ID_USER + 0x0A)
-#define ID_TEXT_3        (GUI_ID_USER + 0x0B)
-#define ID_BUTTON_3        (GUI_ID_USER + 0x0C)
-#define ID_BUTTON_4        (GUI_ID_USER + 0x0D)
-#define ID_BUTTON_5        (GUI_ID_USER + 0x0E)
-#define ID_TEXT_4        (GUI_ID_USER + 0x0F)
-#define ID_TEXT_5        (GUI_ID_USER + 0x10)
-#define ID_TEXT_6        (GUI_ID_USER + 0x11)
-#define ID_TEXT_7        (GUI_ID_USER + 0x12)
-#define ID_TEXT_8        (GUI_ID_USER + 0x13)
 
 // USER START (Optionally insert additional includes)
 // USER END
@@ -85,8 +67,8 @@ static const GUI_WIDGET_CREATE_INFO _aDialogCreate[] = {
   { TEXT_CreateIndirect, "Graph control", ID_TEXT_4, 561, 305, 80, 20, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Last result: [ppm]", ID_TEXT_5, 561, 347, 200, 20, 0, 0x0, 0 },
   { TEXT_CreateIndirect, "Info", ID_TEXT_6, 560, 387, 80, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Ref Pressure", ID_TEXT_7, 577, 96, 80, 20, 0, 0x0, 0 },
-  { TEXT_CreateIndirect, "Measurement rate", ID_TEXT_8, 570, 166, 209, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Ref Pressure", ID_TEXT_7, 577, 96, 100, 20, 0, 0x0, 0 },
+  { TEXT_CreateIndirect, "Measurement rate", ID_TEXT_8, 570, 150, 209, 20, 0, 0x0, 0 },
   // USER START (Optionally insert additional widgets)
   // USER END
 };
@@ -142,6 +124,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        RefPressureSliderChanged();
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -160,6 +143,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
         break;
       case WM_NOTIFICATION_VALUE_CHANGED:
         // USER START (Optionally insert code for reacting on notification message)
+        MesRateCliderChanged();
         // USER END
         break;
       // USER START (Optionally insert additional code for further notification handling)
@@ -170,6 +154,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+        RefPressureSetButton();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -184,6 +169,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+        MesRateSetButton();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -198,6 +184,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+        StartMesButton();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -212,6 +199,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+        StopMesButton();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:
@@ -226,6 +214,7 @@ static void _cbDialog(WM_MESSAGE * pMsg) {
       switch(NCode) {
       case WM_NOTIFICATION_CLICKED:
         // USER START (Optionally insert code for reacting on notification message)
+        ClearGraphButton();
         // USER END
         break;
       case WM_NOTIFICATION_RELEASED:

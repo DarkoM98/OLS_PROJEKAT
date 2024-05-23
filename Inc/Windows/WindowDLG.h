@@ -27,6 +27,13 @@
 #define ID_TEXT_8        (GUI_ID_USER + 0x13)
 
 extern WM_HWIN CreateWindow(void);
+extern void RefPressureSliderChanged(void);
+extern void MesRateCliderChanged(void);
+extern void RefPressureSetButton(void);
+extern void MesRateSetButton(void);
+extern void StartMesButton(void);
+extern void StopMesButton(void);
+extern void ClearGraphButton(void);
 // USER START (Optionally insert additional includes)
 // USER END
 

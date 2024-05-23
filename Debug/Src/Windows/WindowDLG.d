@@ -20,7 +20,7 @@ Src/Windows/WindowDLG.o: ../Src/Windows/WindowDLG.c \
  ../STemWinLib/Inc/PROGBAR.h ../STemWinLib/Inc/RADIO.h \
  ../STemWinLib/Inc/SLIDER.h ../STemWinLib/Inc/SPINBOX.h \
  ../STemWinLib/Inc/TEXT.h ../STemWinLib/Inc/TREEVIEW.h \
- ../STemWinLib/Inc/KNOB.h
+ ../STemWinLib/Inc/KNOB.h ../Inc/Windows/WindowDLG.h
 
 ../STemWinLib/Inc/DIALOG.h:
 
@@ -107,3 +107,5 @@ Src/Windows/WindowDLG.o: ../Src/Windows/WindowDLG.c \
 ../STemWinLib/Inc/TREEVIEW.h:
 
 ../STemWinLib/Inc/KNOB.h:
+
+../Inc/Windows/WindowDLG.h:
